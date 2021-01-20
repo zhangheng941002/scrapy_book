@@ -1,0 +1,7 @@
+*.pyc
+images/*
+*.json
+*.log
+.idea/*
+tests.py
+*.DS_Store
