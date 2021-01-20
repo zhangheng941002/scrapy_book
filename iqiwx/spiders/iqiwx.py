@@ -6,7 +6,7 @@ from iqiwx.utils import new_headers
 class IqiwxSpider(scrapy.Spider):
     name = 'bookSpider'
     allowed_domains = ['iqiwx.com']
-    start_urls = ['http://www.iqiwx.com/all.html']
+    start_urls = ['http://www.iqiwx.com']
     base_url = "http://www.iqiwx.com"
     end_url = ".html"
 
