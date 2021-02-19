@@ -22,7 +22,7 @@ class BookAllInfoModel(models.Model):
         ordering = ('pk',)
         managed = False
         app_label = 'iqiwx'
-        db_table = 'book_all_info'
+        db_table = 'book_all'
 
     def __str__(self):
         return ' '.join([str(getattr(self, field.name)) for field in self._meta.fields])
