@@ -96,3 +96,8 @@ LOGGING = {
 # 每页多大/最少限制
 PAGE_SIZE_MAX = 200
 PAGE_SIZE_MIN = 1
+
+# images 存储路径
+IMAGE_PATH = "./images/"
+# 是否开启下载书封面背景，True/False(下载/不下载)
+IS_LOAD_IMAGE = True

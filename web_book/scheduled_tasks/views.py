@@ -1,14 +1,15 @@
 # coding:utf-8
 import re
-import cn2an
 import requests
 from django_redis import get_redis_connection
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.db.transaction import atomic
+from django.conf import settings
 
 from web_api.models import *
 from .models import *
+from web_api.utils import load_img
 
 
 @api_view(["GET"])
@@ -39,6 +40,9 @@ def handle_book_all_info(request):
             chapter_name = each.get("chapter_name")
             chapter_content = each.get("chapter_content")
             num = each.get("num")
+
+            if settings.IS_LOAD_IMAGE:
+                load_img(url=book_img,path=settings.IMAGE_PATH)
 
             book_types = BookTypeModel.objects.filter(type_name=type_name)
             if not book_types.exists():
@@ -72,4 +76,4 @@ def handle_book_all_info(request):
 
         if ids:
             BookAllInfoModel.objects.filter(id__in=ids).update(status=1)
-    return Response({"status": 1, "msg": "成功", "result": results})
+    return Response({"status": 1, "msg": "成功"})
