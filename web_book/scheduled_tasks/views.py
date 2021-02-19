@@ -38,6 +38,7 @@ def handle_book_all_info(request):
             book_intro = each.get("book_intro")
             chapter_name = each.get("chapter_name")
             chapter_content = each.get("chapter_content")
+            num = each.get("num")
 
             book_types = BookTypeModel.objects.filter(type_name=type_name)
             if not book_types.exists():
@@ -61,16 +62,11 @@ def handle_book_all_info(request):
 
             chapters = BookChapterCreateModel.objects.filter(book_id=book.id, chapter_name=chapter_name)
             if not chapters.exists():
-                trans = cn2an.transform(chapter_name.replace("两", "二"), "cn2an")
-                num = re.findall(r"\d+\.?\d*", trans)
-                if num:
-                    _num = num[0].replace(".", "")
-                else:
-                    _num = 0
+
                 _chapter_content = chapter_content.replace("\\xa0\\xa0\\xa0\\xa0", "<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;").replace("'", "").replace(",", "").replace("[", "").replace("]", "")
 
                 BookChapterCreateModel.objects.get_or_create(book_id=book.id, chapter_name=chapter_name,
-                                                       chapter_content=_chapter_content, num=_num)
+                                                       chapter_content=_chapter_content, num=num)
 
             ids.append(id)
 

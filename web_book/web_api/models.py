@@ -16,6 +16,7 @@ class BookAllInfoModel(models.Model):
     chapter_name = models.CharField(max_length=255)
     chapter_url = models.CharField(max_length=255, blank=True, null=True)
     chapter_content = models.TextField()
+    num = models.IntegerField()
     status = models.IntegerField()
 
     class Meta:
