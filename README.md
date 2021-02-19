@@ -9,9 +9,8 @@
 3、会出一个web展示，或者小程序<br />
 4、进行分布式配置 <br />
 
-安装依赖
-由于Windows环境下安装各种限制，建议在Linux环境中使用
 
+#### 开发调试
 ##### 建议使用单独的依赖环境
 ```
 pip install -r requirements.txt
@@ -26,4 +25,16 @@ scrapy crawl bookSpider
 ```
 # bookSpider 是爬虫名称
 scrapy crawl bookSpider -o items.json
+```
+
+#### 部署
+`需修改配置文件中mysql数据库的配置`
+##### 生成镜像
+```
+docker build -t scrapy_book:v1 .
+```
+##### 创建容器
+```
+# /data/scrapy_book需要更换成你自己的文件路径
+docker run -it -v /data/scrapy_book:/scrapy_book --name=scrapy_book scrapy_book:v1 
 ```

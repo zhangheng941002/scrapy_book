@@ -1,7 +1,9 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# @Time   : 2020/7/7 14:20
+# @Time   : 2021/2/1 10:25
 # @Author : Zh
-# @Project : monitor_center
+# @Email : zhangheng9394@163.com
+# @Project : scrapy_book
 # @File   : celery.py
 # @Software: PyCharm
 from __future__ import absolute_import, unicode_literals
@@ -9,9 +11,9 @@ import os
 from celery import Celery, platforms
 from django.conf import settings
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'monitor_center.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'web_book.settings')
 
-app = Celery('monitor')
+app = Celery('book')
 
 
 app.config_from_object('django.conf:settings', namespace='CELERY')

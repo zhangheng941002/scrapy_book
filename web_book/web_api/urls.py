@@ -1,4 +1,12 @@
-# -*- coding:utf-8 -*-
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# @Time   : 2021/2/1 10:25
+# @Author : Zh
+# @Email : zhangheng9394@163.com
+# @Project : scrapy_book
+# @File   : urls.py
+# @Software: PyCharm
+
 from rest_framework import routers
 from django.conf.urls import url
 
@@ -6,15 +14,15 @@ from .views import *
 
 router = routers.DefaultRouter(trailing_slash=False)
 
+
+router.register(r'book', BookAllInfoViewSet, base_name='book')
 # router.register(r'test', Test, base_name='test')
 
 urlpatterns = router.urls
 
-urlpatterns.append(url(r'add_task_a/', add_task_a))
-urlpatterns.append(url(r'add_task_b/', add_task_b))
-urlpatterns.append(url(r'get/ping', get_ping))
-urlpatterns.append(url(r'get/resource', get_resource))
-urlpatterns.append(url(r'get/monitor', get_monitor))
-urlpatterns.append(url(r'get/wireless/monitor', get_wireless_monitor))
-urlpatterns.append(url(r'get/pop/ping/pop', get_pop_ping_pop_monitor))
-urlpatterns.append(url(r'get/pop/ping/line', get_pop_ping_line_monitor))
+urlpatterns.append(url(r'book_type/', book_type))
+urlpatterns.append(url(r'book_type_info/', book_type_info))
+urlpatterns.append(url(r'book_chapter/', book_chapter))
+
+
+

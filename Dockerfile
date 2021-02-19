@@ -2,10 +2,10 @@
 
 FROM python:3.6
 
-WORKDIR /yk_business
+WORKDIR /scrapy_book
 
-ADD requirments.txt /requirments.txt
-RUN pip install -U -r /requirments.txt
+ADD requirements.txt /requirements.txt
+RUN pip install -U -r /requirements.txt
 
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["python", "run_spider.py"]
 

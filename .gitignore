@@ -5,3 +5,4 @@ images/*
 .idea/*
 tests.py
 *.DS_Store
+settings_pro.py

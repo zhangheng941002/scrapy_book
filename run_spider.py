@@ -6,3 +6,8 @@
 # @Project : scrapy_book
 # @File   : run_spider.py
 # @Software: PyCharm
+
+from scrapy import cmdline
+
+if __name__ == '__main__':
+    cmdline.execute("scrapy crawl bookSpider".split())

@@ -1,44 +1,42 @@
 from rest_framework import serializers
-from .models import SmsDispatch, SystemCronTasks, MailDispatch, GroupSendBlack, ServiceConfig, AgentSalesRelations
+
+from .models import *
 
 
-class SmsDispatchSerializer(serializers.ModelSerializer):
+class BookAllInfoModelSerializer(serializers.ModelSerializer):
     class Meta:
-        model = SmsDispatch
-        fields = '__all__'
-        depth = 0
-
-
-class SystemCronTasksSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SystemCronTasks
-        fields = '__all__'
-        depth = 0
-
-
-class MailDispatchTasksSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = MailDispatch
-        fields = '__all__'
-        depth = 0
-
-
-class GroupSendBlackSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = GroupSendBlack
+        model = BookAllInfoModel
         fields = '__all__'
         depth = 1
 
 
-class ServiceConfigSerializer(serializers.ModelSerializer):
+class BookTypeModelSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ServiceConfig
+        model = BookTypeModel
         fields = '__all__'
         depth = 1
 
 
-class AgentSalesRelationsSerializer(serializers.ModelSerializer):
+class BookModelSerializer(serializers.ModelSerializer):
     class Meta:
-        model = AgentSalesRelations
+        model = BookModel
         fields = '__all__'
-        depth = 2
+        depth = 1
+
+
+class BookChapterSerializer(serializers.ModelSerializer):
+    create_date = serializers.DateTimeField(format='%Y-%m-%d', read_only=True)
+
+    class Meta:
+        model = BookChapterModel
+        fields = '__all__'
+        depth = 3
+
+
+class BookChapterListSerializer(serializers.ModelSerializer):
+    create_date = serializers.DateTimeField(format='%Y-%m-%d', read_only=True)
+
+    class Meta:
+        model = BookChapterModel
+        fields = '__all__'
+        depth = 3

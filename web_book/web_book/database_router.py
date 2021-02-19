@@ -1,4 +1,12 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
+# @Time   : 2021/2/1 10:25
+# @Author : Zh
+# @Email : zhangheng9394@163.com
+# @Project : scrapy_book
+# @File   : database_router.py
+# @Software: PyCharm
+
 from django.conf import settings
 
 DATABASE_MAPPING = settings.DATABASE_APPS_MAPPING
