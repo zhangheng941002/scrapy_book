@@ -130,7 +130,7 @@ class IqiwxSpider(scrapy.Spider):
         chapter_urls = response.xpath("//div[@id='readerlist']//li/a/@href").extract()
         # 章节名称
         chapter_names = response.xpath("//div[@id='readerlist']//li/a/text()").extract()
-        for chapter_url, chapter_name in zip(chapter_urls, chapter_names):
+        for chapter_url, chapter_name, index in zip(chapter_urls, chapter_names, range(1, len(chapter_names)+1)):
             chapter_item = BookChapterItem()
 
             next_url = chapter_login_url + chapter_url
@@ -144,6 +144,7 @@ class IqiwxSpider(scrapy.Spider):
             chapter_item["chapter_login_url"] = chapter_login_url
             chapter_item["chapter_name"] = chapter_name.replace(r"?", "")
             chapter_item["chapter_url"] = next_url
+            chapter_item["num"] = index
             # yield chapter_item
             yield scrapy.Request(next_url, callback=self.finally_parses, meta={'item': chapter_item},
                                  headers=new_headers())

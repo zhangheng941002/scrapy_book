@@ -4,11 +4,9 @@
 # See: https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 
 
-# useful for handling different item types with a single interface
-from itemadapter import ItemAdapter
-from twisted.enterprise import adbapi
 import pymysql
-import datetime
+# useful for handling different item types with a single interface
+from twisted.enterprise import adbapi
 
 
 class MysqlTwistedPipeline(object):
@@ -31,6 +29,7 @@ class MysqlTwistedPipeline(object):
         return cls(db_pool)
 
     def process_item(self, item, spider):
+
         # 使用twisted将mysql插入异步化
         query = self.db_pool.runInteraction(self.insert_data, item)
 
@@ -50,13 +49,15 @@ class MysqlTwistedPipeline(object):
         """
         查询作者，分类，书本的原始信息是否存在，或许相应的数据id,进行章节内容的组装
         """
-        
+
         insert_sql = """
-            insert into book_all_info(book_name,book_login_url,type_name,type_url,book_author,book_img,book_intro,
-            chapter_login_url, chapter_name, chapter_url, chapter_content)
-            values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+            insert into book_all(book_name,book_login_url,type_name,type_url,book_author,book_img,book_intro,
+            chapter_login_url, chapter_name, chapter_url, chapter_content, num)
+            select %s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s, %s from DUAL where not exists(select id from book_all where book_name=%s and chapter_name=%s)
         """
         cursor.execute(insert_sql, (item["book_name"], item["book_login_url"], item["type_name"], item["type_url"],
                                     item["book_author"], item["book_img"], item["book_intro"],
                                     item["chapter_login_url"], item["chapter_name"],
-                                    item["chapter_url"], str(item["chapter_content"])))
+                                    item["chapter_url"], str(item["chapter_content"]), item["num"], item["book_name"],
+                                    item["chapter_name"]))
+

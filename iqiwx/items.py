@@ -48,3 +48,5 @@ class BookChapterItem(BookInfoItem):
     chapter_name = scrapy.Field()
     # 章节内容
     chapter_content = scrapy.Field()
+    # 章节排序
+    num = scrapy.Field()
