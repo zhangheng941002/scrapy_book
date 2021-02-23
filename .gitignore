@@ -1,5 +1,5 @@
 *.pyc
-images/*
+web_book/images/*
 *.json
 *.log
 .idea/*

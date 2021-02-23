@@ -30,11 +30,11 @@ INSTALLED_APPS += [
 
 iqiwx = {
     'ENGINE': 'django.db.backends.mysql',
-    'NAME': 'iqiwx',
-    'USER': 'root',
-    'HOST': '172.30.11.47',
-    'PORT': '3306',
-    'PASSWORD': 'mariadb',
+    'NAME': 'iqiwx',                                    ---------------需要修改---------------
+    'USER': 'root',                                     ---------------需要修改---------------
+    'HOST': '172.30.11.47',                             ---------------需要修改---------------
+    'PORT': '3306',                                     ---------------需要修改---------------
+    'PASSWORD': 'mariadb',                              ---------------需要修改---------------
     'CHARSET': 'UTF8'
 }
 
@@ -66,15 +66,16 @@ CACHES = {
     "redis": {
         "BACKEND": "django_redis.cache.RedisCache",
         # "LOCATION": "redis://:123456@172.30.11.47:6379/0",
-        "LOCATION": "redis://172.30.11.47:6379/0",
+        "LOCATION": "redis://172.30.11.47:6379/0",  # redis 数据库ip和选用数据库    ---------------需要修改---------------
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            "PASSWORD": "123456",
+            "PASSWORD": "123456",  # redis 密码                                  ---------------需要修改---------------
             "CONNECTION_POOL_KWARGS": {"decode_responses": True, "max_connections": 100},
         }
     }
 }
 
+# log日志格式
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -100,4 +101,4 @@ PAGE_SIZE_MIN = 1
 # images 存储路径
 IMAGE_PATH = "./images/"
 # 是否开启下载书封面背景，True/False(下载/不下载)
-IS_LOAD_IMAGE = True
+IS_LOAD_IMAGE = False

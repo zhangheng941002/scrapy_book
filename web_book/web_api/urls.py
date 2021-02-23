@@ -20,9 +20,12 @@ router.register(r'book', BookAllInfoViewSet, base_name='book')
 
 urlpatterns = router.urls
 
-urlpatterns.append(url(r'book_type/', book_type))
-urlpatterns.append(url(r'book_type_info/', book_type_info))
-urlpatterns.append(url(r'book_chapter/', book_chapter))
+urlpatterns.append(url(r'book_type/', book_type))  # 分类
+urlpatterns.append(url(r'book_type_info/', book_info))  # 分类下书的信息
+urlpatterns.append(url(r'book_chapter/', book_chapter))  # 章节列表
+urlpatterns.append(url(r'chapter_content/', chapter_content))  # 章节内容
+
+urlpatterns.append(url(r'search/', search))  # 根据作者名或者书名模糊搜索
 
 
 

@@ -74,6 +74,7 @@ class BookTypeModel(models.Model):
 
 
 class BookModel(models.Model):
+
     book_name = models.CharField(max_length=255)
     # author_id = models.IntegerField()
     author_id = models.ForeignKey(AuthorModel, on_delete=models.DO_NOTHING, db_column="author_id")
