@@ -4,9 +4,12 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from django_redis import get_redis_connection
+import json
 
 from .serializers import *
 from .utils import get_page_limit, page_size_limit
+from scheduled_tasks.tasks import add_chapter_list, report
 
 
 class BookAllInfoViewSet(viewsets.ReadOnlyModelViewSet):
@@ -115,11 +118,24 @@ def book_chapter(request):
     page = query_params.get("page", 1)
     page_size = page_size_limit(query_params.get("page_size", 100))
     limit, offset = get_page_limit(page_size, page)
-    book_chapters = BookChapterModel.objects.filter(book_id=book_id).order_by("num")
-    counts = book_chapters.count()
-    resp = book_chapters[limit:offset]
-    data = BookChapterSerializer(resp, many=True)
-    return Response({"status": 1, "msg": "成功", "counts": counts, "results": data.data})
+
+    redis = get_redis_connection("redis")
+    is_cache_book = redis.hget("book_chapter_list", book_id)
+    if is_cache_book:
+        print("有缓存")
+        book_cache = json.loads(is_cache_book)
+
+        return Response({"status": 1, "msg": "成功", "counts": book_cache.get("num"),
+                         "results": book_cache.get("list")[limit:offset]})
+    else:
+        print("没有缓存，设置缓存")
+        _ = add_chapter_list.delay(book_id)
+
+        book_chapters = BookChapterModel.objects.filter(book_id=book_id).order_by("num")
+        counts = book_chapters.count()
+        resp = book_chapters[limit:offset]
+        data = BookChapterSerializer(resp, many=True)
+        return Response({"status": 1, "msg": "成功", "counts": counts, "results": data.data})
 
 
 @api_view(["GET"])

@@ -112,7 +112,7 @@ npm install
 
 #### 三、项目开发调试运行
 `爬虫和后台服务启动，请先将相应表创建好，创建表sql文件 create_table.sql`
-##### 1、爬虫
+##### 1、爬虫(一下方式三选一即可)
 ###### ① 运行
 ```shell script
 # bookSpider 是爬虫名称
@@ -135,7 +135,13 @@ python run_spider.py
 python manage.py runserver 0.0.0.0:8090
 ```
 
-##### 3、前端服务运行
+##### 3、celery服务
+`需修将celery使用的redis数据库改成你自己的 (web_book/settings/prod.py)`
+```shell script
+celery worker -A web_book -P eventlet  -c 4 -l info
+```
+
+##### 4、前端服务运行
 `需要修改后端代理文件（vue.config.js），指向你运行的web后台服务`
 ```shell script
 # npm 安装依赖
@@ -154,18 +160,21 @@ docker build -t mysql:zh .
 docker run -p 13306:3306 -d --name mysql mysql:zh
 ```
 
-##### 2、爬虫及web服务
+##### 2、爬虫、web服务及celery服务
 `需修改配置文件中mysql数据库的配置和redis缓存数据库配置 (web_book/settings/prod.py)`
 ```shell script
 # scrapy_book文件内,创建爬虫及web服务镜像
 docker build -t scrapy_book:v1 .
 
-# /data/scrapy_book需要更换成你自己的文件路径
+# /data/scrapy_book需要更换成你自己的文件路径，绝对路径
 # 爬虫服务
 docker run -idt -v /data/scrapy_book:/scrapy_book --name=book_spider scrapy_book:v1 sh -c "cd /scrapy_book && python3 run_spider.py"
 # web服务
-docker run -itd -p 8090:8000 --name=web_book -v /data/scrapy_book/:/scrapy_book/ uwsgi --http 0.0.0.0:8000 --chdir /scrapy_book/ --wsgi-file scrapy_book/web_book/web_book/wsgi.py --module web_book.wsgi --master --processes 8 --threads 4
+docker run -itd -p 8090:8000 --name=web_book -v /data/scrapy_book/web_book:/web_book/ scrapy_book:v1 uwsgi --http 0.0.0.0:8000 --chdir /web_book/ --wsgi-file web_book/web_book/wsgi.py --module web_book.wsgi --master --processes 8 --threads 4
 
+#需修将celery使用的redis数据库改成你自己的 (web_book/settings/prod.py)
+docker run -it --name=celery -v /data/scrapy_book/web_book/:/web_book/ scrapy_book:v1 celery --workdir=/web_book/  worker -A web_book -P eventlet -c 4 -l info
 ```
+
 ##### 3、前端服务
 `前端服务部署采用NGINX静态服务代理`
