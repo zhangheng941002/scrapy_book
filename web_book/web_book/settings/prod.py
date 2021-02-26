@@ -28,13 +28,24 @@ INSTALLED_APPS += [
     "scheduled_tasks"
 ]
 
+# ----------------------------------------- mysql 配置 -----------------------------------------
+
+MYSQL_HOST = os.environ.get('MYSQL_HOST') if os.environ.get('MYSQL_HOST') != None else "book_mysql"
+MYSQL_USER = os.environ.get('MYSQL_USER') if os.environ.get('MYSQL_USER') != None else "root"
+MYSQL_PWD = os.environ.get('MYSQL_PWD') if os.environ.get('MYSQL_PWD') != None else "123456"
+MYSQL_DB = os.environ.get('MYSQL_DB') if os.environ.get('MYSQL_DB') != None else "iqiwx"
+MYSQL_PORT = os.environ.get('MYSQL_PORT') if os.environ.get('MYSQL_PORT') != None else "3306"
+
+# ----------------------------------------- mysql 配置 -----------------------------------------
+
+
 iqiwx = {
     'ENGINE': 'django.db.backends.mysql',
-    'NAME': 'iqiwx',  # ---------------需要修改---------------
-    'USER': 'root',  # ---------------需要修改---------------
-    'HOST': '172.30.11.47',  # ---------------需要修改---------------
-    'PORT': '3306',  # ---------------需要修改---------------
-    'PASSWORD': 'mariadb',  # ---------------需要修改---------------
+    'NAME': MYSQL_DB,
+    'USER': MYSQL_USER,
+    'HOST': MYSQL_HOST,
+    'PORT': MYSQL_PORT,
+    'PASSWORD': MYSQL_PWD,
     'CHARSET': 'UTF8'
 }
 
@@ -53,6 +64,16 @@ MIDDLEWARE_CLASSES = (
     "django.middleware.cache.FetchFromCacheMiddleware",
 )
 
+# ----------------------------------------- redis 配置 -----------------------------------------
+
+REDIS_HOST = os.environ.get('MYSQL_HOST') if os.environ.get('REDIS_HOST') != None else "book_redis"
+REDIS_PWD = os.environ.get('MYSQL_PWD') if os.environ.get('REDIS_PWD') != None else "123456"
+REDIS_DB = os.environ.get('MYSQL_DB') if os.environ.get('REDIS_DB') != None else "0"
+REDIS_PORT = os.environ.get('MYSQL_PORT') if os.environ.get('REDIS_PORT') != None else "6379"
+
+# ----------------------------------------- redis 配置 -----------------------------------------
+
+
 # 配置两个缓存，默认的及redis
 CACHES = {
     # django-redis默认进入的cache缓存
@@ -66,11 +87,12 @@ CACHES = {
     "redis": {
         "BACKEND": "django_redis.cache.RedisCache",
         # "LOCATION": "redis://:123456@172.30.11.47:6379/0",
-        "LOCATION": "redis://172.30.11.47:6379/0",  # redis 数据库ip和选用数据库    ---------------需要修改---------------
+        "LOCATION": "redis://{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}".format(REDIS_HOST=REDIS_HOST, REDIS_PORT=REDIS_PORT,
+                                                                          REDIS_DB=REDIS_DB),
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "COMPRESSOR": "django_redis.compressors.zlib.ZlibCompressor",  # 压缩，默认是关闭的
-            "PASSWORD": "123456",  # redis 密码                                  ---------------需要修改---------------
+            "PASSWORD": REDIS_PWD,  # redis 密码
             "CONNECTION_POOL_KWARGS": {"decode_responses": True, "max_connections": 100},
         }
     }
@@ -105,7 +127,11 @@ IMAGE_PATH = "./images/"
 IS_LOAD_IMAGE = False
 
 # celery 配置
-CELERY_BROKER_URL = 'redis://:123456@172.30.11.47:6379/8'
-CELERY_RESULT_BACKEND = 'redis://:123456@172.30.11.47:6379/9'
+CELERY_BROKER_URL = 'redis://:{REDIS_PWD}@{REDIS_HOST}:{REDIS_PORT}/8'.format(REDIS_HOST=REDIS_HOST,
+                                                                              REDIS_PORT=REDIS_PORT,
+                                                                              REDIS_PWD=REDIS_PWD)
+CELERY_RESULT_BACKEND = 'redis://:{REDIS_PWD}@{REDIS_HOST}:{REDIS_PORT}/9'.format(REDIS_HOST=REDIS_HOST,
+                                                                                  REDIS_PORT=REDIS_PORT,
+                                                                                  REDIS_PWD=REDIS_PWD)
 CELERY_RESULT_SERIALIZER = 'json'  # 结果序列化方案
 CELERY_TIMEZONE = 'Asia/Shanghai'

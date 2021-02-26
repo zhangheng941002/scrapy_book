@@ -1,5 +1,5 @@
 -- 创建数据库
-create database `iqiwx` default character set utf8 collate utf8_general_ci;
+create database if not exists `iqiwx` default character set utf8  collate utf8_general_ci;
 
 use iqiwx;
 
@@ -9,7 +9,7 @@ SET FOREIGN_KEY_CHECKS=0;
 -- ----------------------------
 -- Table structure for ready_spider
 -- ----------------------------
-CREATE TABLE `ready_spider` (
+CREATE TABLE  if not exists `ready_spider` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键，自增',
   `book_id` int(11) DEFAULT NULL COMMENT '书的id',
   `create_date` datetime DEFAULT NULL COMMENT '新建时间',
@@ -20,11 +20,11 @@ CREATE TABLE `ready_spider` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
-CREATE TABLE `book_chapter` (
+CREATE TABLE  if not exists `book_chapter` (
   `id` int(21) NOT NULL AUTO_INCREMENT,
   `book_id` int(21) NOT NULL,
   `chapter_name` varchar(1024) NOT NULL,
-  `chapter_content` text NOT NULL,
+  `chapter_content` longtext NOT NULL,
   `num` int(12) NOT NULL,
   `create_date` datetime DEFAULT NULL ON UPDATE current_timestamp(),
   PRIMARY KEY (`id`),
@@ -33,7 +33,7 @@ CREATE TABLE `book_chapter` (
 ) ENGINE=InnoDB AUTO_INCREMENT=120869 DEFAULT CHARSET=utf8mb4;
 
 
-CREATE TABLE `book_type` (
+CREATE TABLE  if not exists `book_type` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键，自增',
   `type_name` varchar(255) DEFAULT NULL COMMENT '类名',
   `create_date` datetime DEFAULT NULL COMMENT '创建时间',
@@ -44,7 +44,7 @@ CREATE TABLE `book_type` (
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
 
 
-CREATE TABLE `author` (
+CREATE TABLE  if not exists `author` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键，自增',
   `author_name` varchar(255) NOT NULL COMMENT '作者',
   `author_intro` text DEFAULT NULL COMMENT '作者简介',
@@ -58,7 +58,7 @@ CREATE TABLE `author` (
 ) ENGINE=InnoDB AUTO_INCREMENT=373 DEFAULT CHARSET=utf8mb4;
 
 
-CREATE TABLE `book` (
+CREATE TABLE  if not exists `book` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键，自增',
   `book_name` varchar(255) NOT NULL COMMENT '书名',
   `author_id` int(11) NOT NULL COMMENT '作者id',
@@ -73,7 +73,7 @@ CREATE TABLE `book` (
 ) ENGINE=InnoDB AUTO_INCREMENT=374 DEFAULT CHARSET=utf8mb4;
 
 
-CREATE TABLE `insert_error` (
+CREATE TABLE  if not exists `insert_error` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
   `msg` text DEFAULT NULL COMMENT '错误信息',
   `create_date` datetime DEFAULT NULL COMMENT '创建时间',
@@ -83,7 +83,7 @@ CREATE TABLE `insert_error` (
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
 
 
-CREATE TABLE `book_all` (
+CREATE TABLE  if not exists `book_all` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `book_name` varchar(255) DEFAULT NULL,
   `book_login_url` varchar(255) DEFAULT NULL,
@@ -95,7 +95,7 @@ CREATE TABLE `book_all` (
   `chapter_login_url` varchar(255) DEFAULT NULL,
   `chapter_name` varchar(255) DEFAULT NULL,
   `chapter_url` varchar(255) DEFAULT NULL,
-  `chapter_content` text DEFAULT NULL,
+  `chapter_content` longtext DEFAULT NULL,
   `num` int(12) NOT NULL DEFAULT 0,
   `status` int(4) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
@@ -103,3 +103,4 @@ CREATE TABLE `book_all` (
   KEY `book_name` (`book_name`) USING BTREE,
   KEY `chapter_name` (`chapter_name`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=111803 DEFAULT CHARSET=utf8mb4;
+

@@ -12,7 +12,7 @@
 #### 一、项目结构
 ```shell
 .
-├── Dockerfile                          # 项目Dockerfile脚本
+├── Dockerfile                          # web项目及爬虫Dockerfile脚本
 ├── README.md                           # 项目介绍文件README.md  
 ├── requirements.txt                    # 项目依赖文件
 ├── run_spider.py                       # 爬虫启动文件
@@ -25,8 +25,15 @@
 │   ├── settings.py
 │   ├── spiders
 │   │   ├── __init__.py
-│   │   ├── iqiwx.py                    
+│   │   └── iqiwx.py                    
 │   └── utils.py
+├── mysql                               # mysql
+│   ├── Dockerfile                      # mysql Dockerfile脚本
+│   ├── privileges.sql                  # 权限文件      
+│   ├── schema.sql                      # 创建表文件
+│   └── setup.sh                        # 启动脚本
+├── nginx                               # nginx
+│   └── default                         # 静态代理
 ├──  web_book                            # web服务项目
 │   ├── create_table.sql                # web服务依赖的数据库文件
 │   ├── db.sqlite3
@@ -152,7 +159,36 @@ npm run serve
 ```
 
 #### 四、部署
-##### 1、创建数据库（如果以有数据库不需要次操作）
+
+##### 拉起现有镜像
+使用zzhgod/zh_spider_mysql和zzhgod/zh_spider两个镜像
+```shell script
+docker pull zzhgod/zh_spider_mysql
+docker pull zzhgod/zh_spider_redis
+docker pull zzhgod/zh_spider
+
+# 数据库
+docker run -idt --name=book_mysql -p 3306:3306 zzhgod/zh_spider_mysql
+docker run -p 6379:6379 --name=book_redis -d zzhgod/zh_spider_redis redis-server --appendonly yes --requirepass "123456"
+# web服务
+docker run -idt -p 8090:8000 -p 9080:80  --name=book_web --link=book_mysql --link=book_redis  zzhgod/zh_spider sh -c " nginx &&  uwsgi --http 0.0.0.0:8000 --chdir /web_book/ --wsgi-file web_book/web_book/wsgi.py --module web_book.wsgi --master --processes 8 --threads 4"
+# celery，用于缓存（优化查询使用）
+docker run -it --name=book_celery --link=book_mysql --link=book_redis zzhgod/zh_spider celery --workdir=/web_book/  worker -A web_book -P eventlet -c 4 -l info
+```
+
+
+使用其他数据库(redis mysql)
+```shell script
+docker run -idt -p 8090:8000 -p 9080:80  --name=book_web -e MYSQL_HOST=127.0.0.1 -e MYSQL_USER=root -e MYSQL_PWD=123456 -e MYSQL_DB=iqiwx -e REDIS_PWD=123456 -e REDIS_HOST=127.0.0.1 -e REDIS_PORT=6379 zzhgod/zh_spider sh -c " nginx &&  uwsgi --http 0.0.0.0:8000 --chdir /web_book/ --wsgi-file web_book/web_book/wsgi.py --module web_book.wsgi --master --processes 8 --threads 4"
+
+
+docker run -idt --name=book_celery -e MYSQL_HOST=127.0.0.1 -e MYSQL_USER=root -e MYSQL_PWD=123456 -e MYSQL_DB=iqiwx -e REDIS_PWD=123456 -e REDIS_HOST=127.0.0.1 -e REDIS_PORT=6379  zzhgod/zh_spider  celery --workdir=/web_book/  worker -A web_book -P eventlet -c 4 -l info
+```
+
+
+
+##### 项目分开部署，自己构建docker镜像
+###### 1、创建数据库（如果以有数据库不需要次操作）
 ```shell script
 # 进到mysql文件内,创建mysql镜像
 docker build -t mysql:zh .
@@ -160,7 +196,7 @@ docker build -t mysql:zh .
 docker run -p 13306:3306 -d --name mysql mysql:zh
 ```
 
-##### 2、爬虫、web服务及celery服务
+###### 2、爬虫、web服务及celery服务
 `需修改配置文件中mysql数据库的配置和redis缓存数据库配置 (web_book/settings/prod.py)`
 ```shell script
 # scrapy_book文件内,创建爬虫及web服务镜像
@@ -168,13 +204,13 @@ docker build -t scrapy_book:v1 .
 
 # /data/scrapy_book需要更换成你自己的文件路径，绝对路径
 # 爬虫服务
-docker run -idt -v /data/scrapy_book:/scrapy_book --name=book_spider scrapy_book:v1 sh -c "cd /scrapy_book && python3 run_spider.py"
+docker run -idt -v /data/scrapy_book:/scrapy_book/ --name=book_spider scrapy_book:v1 sh -c "cd /scrapy_book && python3 run_spider.py"
 # web服务
-docker run -itd -p 8090:8000 --name=web_book -v /data/scrapy_book/web_book:/web_book/ scrapy_book:v1 uwsgi --http 0.0.0.0:8000 --chdir /web_book/ --wsgi-file web_book/web_book/wsgi.py --module web_book.wsgi --master --processes 8 --threads 4
+docker run -itd -p 8090:8000 --name=book_web -v /data/scrapy_book/web_book:/web_book/ scrapy_book:v1 uwsgi --http 0.0.0.0:8000 --chdir /web_book/ --wsgi-file web_book/web_book/wsgi.py --module web_book.wsgi --master --processes 8 --threads 4
 
 #需修将celery使用的redis数据库改成你自己的 (web_book/settings/prod.py)
-docker run -it --name=celery -v /data/scrapy_book/web_book/:/web_book/ scrapy_book:v1 celery --workdir=/web_book/  worker -A web_book -P eventlet -c 4 -l info
+docker run -idt --name=celery -v /data/scrapy_book/web_book/:/web_book/ scrapy_book:v1 celery --workdir=/web_book/  worker -A web_book -P eventlet -c 4 -l info
 ```
 
-##### 3、前端服务
+###### 3、前端服务
 `前端服务部署采用NGINX静态服务代理`

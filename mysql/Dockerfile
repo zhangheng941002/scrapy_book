@@ -1,4 +1,4 @@
-FROM mysql:5.7.23
+FROM mysql:5.7.33
 
 #设置免密登录
 ENV MYSQL_ALLOW_EMPTY_PASSWORD yes

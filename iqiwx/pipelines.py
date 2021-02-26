@@ -61,3 +61,5 @@ class MysqlTwistedPipeline(object):
                                     item["chapter_url"], str(item["chapter_content"]), item["num"], item["book_name"],
                                     item["chapter_name"]))
 
+        print("------------------------------------------ insert data -----------------------------------------------------")
+

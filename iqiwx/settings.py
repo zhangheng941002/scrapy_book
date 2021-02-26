@@ -6,6 +6,7 @@
 #     https://docs.scrapy.org/en/latest/topics/settings.html
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
+import os
 
 BOT_NAME = 'iqiwx'
 
@@ -98,12 +99,10 @@ ITEM_PIPELINES = {
 FEED_EXPORT_ENCODING = 'utf-8'
 
 # 数据库配置
-MYSQL_HOST = "172.30.11.47"
-MYSQL_DBNAME = "iqiwx"
-MYSQL_USER = "root"
-MYSQL_PASSWORD = "mariadb"
-MYSQL_PORT = 3306
-
-
+MYSQL_HOST = os.environ.get('MYSQL_HOST') if os.environ.get('MYSQL_HOST') != None else "book_mysql"
+MYSQL_USER = os.environ.get('MYSQL_USER') if os.environ.get('MYSQL_USER') != None else "root"
+MYSQL_PASSWORD = os.environ.get('MYSQL_PWD') if os.environ.get('MYSQL_PWD') != None else "123456"
+MYSQL_DBNAME = os.environ.get('MYSQL_DB') if os.environ.get('MYSQL_DB') != None else "iqiwx"
+MYSQL_PORT = int(os.environ.get('MYSQL_PORT')) if os.environ.get('MYSQL_PORT') != None else 3306
 
 DOWNLOAD_FAIL_ON_DATALOSS = False
